@@ -20,7 +20,7 @@ dotenv.config();
 // Import Express application (imported after dotenv config to ensure it has variables loaded)
 import app from './app.js';
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 let server;
 
 // Connect to MongoDB and then start the server
