@@ -48,7 +48,6 @@ invoiceSchema.pre('save', function (next) {
     this.platformFee = Math.round(this.totalAmount * 0.05 * 100) / 100;
     this.creatorPayout = Math.round(this.totalAmount * 0.95 * 100) / 100;
   }
-  next();
 });
 
 // Indexes for looking up invoices by campaign

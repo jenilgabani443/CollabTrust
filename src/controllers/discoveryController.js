@@ -13,11 +13,11 @@ export const discoverCreators = catchAsync(async (req, res, next) => {
   const matchStage = { role: 'Creator' };
 
   if (location) {
-    matchStage['profileDetails.location'] = { $regex: location.trim(), $options: 'i' };
+    matchStage['location'] = { $regex: location.trim(), $options: 'i' };
   }
 
   if (niche) {
-    matchStage['profileDetails.niche'] = { $regex: niche.trim(), $options: 'i' };
+    matchStage['niche'] = { $regex: niche.trim(), $options: 'i' };
   }
 
   // Calculate start/end dates for the requested timeframe
@@ -108,7 +108,7 @@ export const discoverCreators = catchAsync(async (req, res, next) => {
     // Step 7: Project/format the returned fields
     {
       $project: {
-        passwordHash: 0,
+        password: 0,
         __v: 0,
         analyticsData: 0, // Exclude the raw joined array
       },

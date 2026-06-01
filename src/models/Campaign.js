@@ -12,7 +12,7 @@ const deliverableSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['PENDING', 'SUBMITTED', 'APPROVED', 'REJECTED'],
+      enum: ['PENDING', 'PENDING_VERIFICATION', 'SUBMITTED', 'APPROVED', 'REJECTED'],
       default: 'PENDING',
     },
     submissionUrl: {
@@ -66,6 +66,19 @@ const campaignSchema = new mongoose.Schema(
 // Indexes for fast querying of brand-specific and creator-specific campaigns
 campaignSchema.index({ brandId: 1, status: 1 });
 campaignSchema.index({ creatorId: 1, status: 1 });
+
+// Post-save hook to automatically generate invoice when campaign status becomes PAID
+campaignSchema.post('save', async function (doc) {
+  if (doc.status === 'PAID') {
+    try {
+      const { generateInvoiceForCampaign } = await import('../services/invoiceService.js');
+      const totalAmount = doc._totalAmount || 1000;
+      await generateInvoiceForCampaign(doc._id, totalAmount);
+    } catch (error) {
+      console.error('Error automatically generating invoice on campaign PAID status:', error);
+    }
+  }
+});
 
 const Campaign = mongoose.model('Campaign', campaignSchema);
 

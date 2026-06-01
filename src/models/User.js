@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/\S+@\S+\.\S+/, 'Please provide a valid email address'],
     },
-    passwordHash: {
+    password: { // Changed from passwordHash to match your API request
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters long'],
@@ -36,28 +36,22 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically manages createdAt and updatedAt
+    timestamps: true,
   }
 );
 
 // Pre-save hook to hash password before saving to the database
-userSchema.pre('save', async function (next) {
-  // Only run this function if the passwordHash field was actually modified
-  if (!this.isModified('passwordHash')) return next();
+userSchema.pre('save', async function () {
+  // Only run this function if the password field was actually modified
+  if (!this.isModified('password')) return;
 
-  try {
-    // Generate salt and hash the password
-    const salt = await bcrypt.genSalt(12);
-    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
+  // Generate salt and hash the password (no next() needed for async hooks)
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
 });
-
 // Instance method to check if a password matches the hashed password
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.passwordHash);
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = mongoose.model('User', userSchema);
