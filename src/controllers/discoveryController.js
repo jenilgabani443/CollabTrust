@@ -13,11 +13,12 @@ export const discoverCreators = catchAsync(async (req, res, next) => {
   const matchStage = { role: 'Creator' };
 
   if (location) {
-    matchStage['location'] = { $regex: location.trim(), $options: 'i' };
+    matchStage['profileDetails.location'] = { $regex: location.trim(), $options: 'i' };
   }
 
   if (niche) {
-    matchStage['niche'] = { $regex: niche.trim(), $options: 'i' };
+    // Search inside the niches array for matching entries
+    matchStage['profileDetails.niches'] = { $regex: niche.trim(), $options: 'i' };
   }
 
   // Calculate start/end dates for the requested timeframe
@@ -109,6 +110,7 @@ export const discoverCreators = catchAsync(async (req, res, next) => {
     {
       $project: {
         password: 0,
+        email: 0,
         __v: 0,
         analyticsData: 0, // Exclude the raw joined array
       },
@@ -132,5 +134,25 @@ export const discoverCreators = catchAsync(async (req, res, next) => {
     data: {
       creators,
     },
+  });
+});
+
+/**
+ * Get a single creator's full profile by ID.
+ * Used by Brands to view a creator's detailed info from the discovery page.
+ */
+export const getCreatorById = catchAsync(async (req, res, next) => {
+  const creator = await User.findOne({
+    _id: req.params.id,
+    role: 'Creator',
+  }).select('-password -__v -email');
+
+  if (!creator) {
+    return next(new AppError('Creator not found.', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { creator },
   });
 });

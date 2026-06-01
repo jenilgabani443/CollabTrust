@@ -28,8 +28,8 @@ const campaignSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ['DRAFT', 'FUNDED', 'SUBMITTED', 'APPROVED', 'PAID'],
-        message: 'Status must be one of DRAFT, FUNDED, SUBMITTED, APPROVED, or PAID',
+        values: ['DRAFT', 'ACCEPTED', 'REJECTED', 'FUNDED', 'SUBMITTED', 'APPROVED', 'PAID'],
+        message: 'Status must be one of DRAFT, ACCEPTED, REJECTED, FUNDED, SUBMITTED, APPROVED, or PAID',
       },
       default: 'DRAFT',
     },
@@ -43,9 +43,27 @@ const campaignSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Creator reference is required'],
     },
+    title: {
+      type: String,
+      required: [true, 'Campaign title is required'],
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: [true, 'Campaign description is required'],
+    },
+    budget: {
+      type: Number,
+      required: [true, 'Proposed budget is required'],
+      min: [0, 'Budget cannot be negative'],
+    },
+    deadline: {
+      type: Date,
+      required: [true, 'Deadline is required'],
+    },
     contractHash: {
       type: String,
-      required: [true, 'Cryptographic contract hash signature is required'],
+      default: '',
       trim: true,
     },
     deliverables: {

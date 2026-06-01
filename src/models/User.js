@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/\S+@\S+\.\S+/, 'Please provide a valid email address'],
     },
-    password: { // Changed from passwordHash to match your API request
+    password: {
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters long'],
@@ -25,13 +25,28 @@ const userSchema = new mongoose.Schema(
       default: 'Creator',
     },
     profileDetails: {
-      location: {
+      firstName: { type: String, default: '' },
+      lastName: { type: String, default: '' },
+      dateOfBirth: { type: Date, default: null },
+      gender: {
         type: String,
+        enum: ['', 'Male', 'Female', 'Non-binary', 'Prefer not to say'],
         default: '',
       },
-      niche: {
-        type: String,
-        default: '',
+      location: { type: String, default: '' },
+      phone: { type: String, default: '' },
+      bio: { type: String, default: '' },
+      profilePicture: { type: String, default: '' },
+      languagePreferences: { type: [String], default: [] },
+      // Replaces old single "niche" field — now an array of selected content niches/formats
+      niches: { type: [String], default: [] },
+      socialLinks: {
+        youtube: { type: String, default: '' },
+        instagram: { type: String, default: '' },
+        twitter: { type: String, default: '' },
+        linkedin: { type: String, default: '' },
+        facebook: { type: String, default: '' },
+        website: { type: String, default: '' },
       },
     },
   },
@@ -49,6 +64,7 @@ userSchema.pre('save', async function () {
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
 // Instance method to check if a password matches the hashed password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);

@@ -84,7 +84,7 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password.', 401));
   }
 
-  // 3. Generate token and respond
+  // 3. Generate token and respond (include profileDetails for frontend firstName display)
   const token = signToken(user._id, user.role);
 
   res.status(200).json({
@@ -95,6 +95,7 @@ export const login = catchAsync(async (req, res, next) => {
         id: user._id,
         email: user.email,
         role: user.role,
+        profileDetails: user.profileDetails,
       },
     },
   });
@@ -104,7 +105,7 @@ export const login = catchAsync(async (req, res, next) => {
  * Get current user profile
  */
 export const getMe = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).select('-password');
 
   if (!user) {
     return next(new AppError('User not found.', 404));
@@ -118,6 +119,7 @@ export const getMe = catchAsync(async (req, res, next) => {
 
 /**
  * Update current user profile
+ * Handles the full expanded profileDetails object including nested socialLinks and niches array.
  */
 export const updateMe = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id);
@@ -126,19 +128,85 @@ export const updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError('User not found.', 404));
   }
 
-  // Handle various formats from the frontend gracefully
-  if (req.body.location) user.profileDetails.location = req.body.location;
-  if (req.body.niche) user.profileDetails.niche = req.body.niche;
-  if (req.body.nicheTags) user.profileDetails.niche = req.body.nicheTags;
+  // Disallow password changes through this route
+  if (req.body.password) {
+    return next(new AppError('This route is not for password updates.', 400));
+  }
 
-  if (req.body.profileDetails) {
-    user.profileDetails = { ...user.profileDetails, ...req.body.profileDetails };
+  const { profileDetails } = req.body;
+
+  if (profileDetails) {
+    // Update scalar fields if provided
+    const scalarFields = [
+      'firstName', 'lastName', 'location', 'phone', 'bio',
+      'profilePicture', 'gender', 'dateOfBirth',
+    ];
+
+    for (const field of scalarFields) {
+      if (profileDetails[field] !== undefined) {
+        user.profileDetails[field] = profileDetails[field];
+      }
+    }
+
+    // Update array fields if provided
+    if (profileDetails.languagePreferences !== undefined) {
+      user.profileDetails.languagePreferences = profileDetails.languagePreferences;
+    }
+    if (profileDetails.niches !== undefined) {
+      user.profileDetails.niches = profileDetails.niches;
+    }
+
+    // Update nested socialLinks if provided
+    if (profileDetails.socialLinks) {
+      const linkFields = ['youtube', 'instagram', 'twitter', 'linkedin', 'facebook', 'website'];
+      for (const field of linkFields) {
+        if (profileDetails.socialLinks[field] !== undefined) {
+          user.profileDetails.socialLinks[field] = profileDetails.socialLinks[field];
+        }
+      }
+    }
+
+    // Backwards compatibility: handle old-style niche (single string) → convert to array
+    if (profileDetails.niche && !profileDetails.niches) {
+      user.profileDetails.niches = profileDetails.niche
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
+  }
+
+  // Backwards compatibility for flat-style requests
+  if (req.body.location) user.profileDetails.location = req.body.location;
+  if (req.body.nicheTags) {
+    user.profileDetails.niches = req.body.nicheTags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
   }
 
   await user.save();
 
+  // Return user without password
+  const updatedUser = await User.findById(req.user.id).select('-password');
+
   res.status(200).json({
     status: 'success',
-    data: { user }
+    data: { user: updatedUser }
+  });
+});
+
+/**
+ * Delete current user account permanently
+ */
+export const deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.user.id);
+
+  if (!user) {
+    return next(new AppError('User not found.', 404));
+  }
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });

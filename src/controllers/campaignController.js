@@ -6,12 +6,66 @@ import { verificationQueue } from '../queues/verificationQueue.js';
 
 // Strict state machine transitions definition
 const VALID_TRANSITIONS = {
-  DRAFT: ['FUNDED'],
+  DRAFT: ['ACCEPTED', 'REJECTED'],
+  ACCEPTED: ['FUNDED'],
   FUNDED: ['SUBMITTED'],
   SUBMITTED: ['APPROVED'],
   APPROVED: ['PAID'],
   PAID: [], // Terminal state
+  REJECTED: [], // Terminal state
 };
+
+/**
+ * Fetch all campaigns for the currently logged-in user
+ */
+export const getMyCampaigns = catchAsync(async (req, res, next) => {
+  let query = {};
+
+  // Filter based on whether the user is a Brand or a Creator
+  if (req.user.role === 'Brand') {
+    query = { brandId: req.user.id };
+  } else if (req.user.role === 'Creator') {
+    query = { creatorId: req.user.id };
+  }
+
+  const campaigns = await Campaign.find(query);
+
+  res.status(200).json({
+    status: 'success',
+    results: campaigns.length,
+    data: { campaigns }
+  });
+});
+
+/**
+ * Create a new Campaign proposal (DRAFT status)
+ */
+export const createCampaign = catchAsync(async (req, res, next) => {
+  const { title, description, budget, deliverables, deadline, creatorId } = req.body;
+  const brandId = req.user.id;
+
+  if (!title || !description || !budget || !deliverables || !deadline || !creatorId) {
+    return next(new AppError('Please provide all required campaign fields.', 400));
+  }
+
+  const campaign = await Campaign.create({
+    title,
+    description,
+    budget,
+    deliverables,
+    deadline,
+    creatorId,
+    brandId,
+    status: 'DRAFT',
+  });
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      campaign,
+    },
+  });
+});
 
 /**
  * Controller to handle status transition for a Campaign.
@@ -45,18 +99,15 @@ export const transitionCampaignStatus = catchAsync(async (req, res, next) => {
     );
   }
 
-  // 4. Implement specific transition logic: DRAFT -> FUNDED
-  if (currentStatus === 'DRAFT' && nextStatus === 'FUNDED') {
-    if (!payoutTerms) {
-      return next(
-        new AppError('Payout terms (payoutTerms) must be provided in the request body to transition from DRAFT to FUNDED.', 400)
-      );
-    }
+  // 4. Implement specific transition logic: ACCEPTED -> FUNDED
+  if (currentStatus === 'ACCEPTED' && nextStatus === 'FUNDED') {
+    // Default payoutTerms if not provided in the request body to ensure seamless transition
+    const appliedPayoutTerms = payoutTerms || 'Standard Escrow 100%';
 
     // Stringify deliverables and payout terms
     const payloadToHash = JSON.stringify({
       deliverables: campaign.deliverables,
-      payoutTerms,
+      payoutTerms: appliedPayoutTerms,
     });
 
     // Generate SHA-256 hash using Node's native crypto module
@@ -68,7 +119,7 @@ export const transitionCampaignStatus = catchAsync(async (req, res, next) => {
 
   // 5. Update status and save
   campaign.status = nextStatus;
-  
+
   if (nextStatus === 'PAID') {
     campaign._totalAmount = req.body.totalAmount || 1000;
   }
