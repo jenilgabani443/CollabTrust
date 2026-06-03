@@ -180,3 +180,25 @@ export const submitDeliverableUrl = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const getCampaignById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const campaign = await Campaign.findById(id)
+    .populate('brandId', 'email profileDetails')
+    .populate('creatorId', 'email profileDetails');
+
+  if (!campaign) {
+    return next(new AppError('Campaign not found', 404));
+  }
+
+  // Optional: check if the user is authorized to view this campaign
+  // if (req.user.role === 'Creator' && campaign.creatorId._id.toString() !== req.user.id) ...
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      campaign,
+    },
+  });
+});

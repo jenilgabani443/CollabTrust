@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Brand palette (shared) ─── */
+:root {
+  --color-primary: oklch(0.585 0.233 277.117);
+  --color-primary-light: oklch(0.673 0.182 276.935);
+  --color-primary-dark: oklch(0.457 0.24 277.023);
+  --color-surface: oklch(0.985 0.002 247.839);
+  --color-surface-alt: oklch(0.967 0.003 264.542);
+  --color-text: oklch(0.21 0.006 285.885);
+  --color-text-muted: oklch(0.553 0.013 257.281);
+  --color-border: oklch(0.869 0.005 252.529);
+  --color-success: oklch(0.627 0.194 149.214);
+  --color-danger: oklch(0.577 0.245 27.325);
+  --color-warning: oklch(0.769 0.188 70.08);
+
+  /* Spatial — light mode */
+  --spatial-bg: #f3f0fa;
+  --spatial-bg-canvas: #ebe6f5;
+  --spatial-text: oklch(0.21 0.006 285.885);
+  --spatial-text-muted: oklch(0.48 0.02 285);
+  --spatial-glass: rgba(255, 255, 255, 0.72);
+  --spatial-glass-border: rgba(15, 15, 30, 0.08);
+  --spatial-card: rgba(255, 255, 255, 0.55);
+  --spatial-card-muted: rgba(255, 255, 255, 0.35);
+  --spatial-hover: rgba(124, 58, 237, 0.06);
+  --spatial-shadow: 0 8px 32px rgba(30, 20, 60, 0.08);
+  --spatial-spotlight-1: rgba(124, 58, 237, 0.12);
+  --spatial-spotlight-2: rgba(255, 255, 255, 0.65);
+  --spatial-spotlight-3: rgba(167, 139, 250, 0.1);
+  --spatial-accent: #6d28d9;
+  --spatial-accent-soft: #7c3aed;
+  --spatial-accent-bg: rgba(124, 58, 237, 0.1);
+  --spatial-accent-border: rgba(124, 58, 237, 0.22);
+  --spatial-avatar-border: #f8f6fc;
+  --spatial-overlay-1: rgba(139, 92, 246, 0.14);
+  --spatial-overlay-2: rgba(99, 102, 241, 0.1);
+  --spatial-overlay-3: rgba(124, 58, 237, 0.08);
+  --spatial-particle-core: 0.45, 0.32, 0.72;
+  --spatial-particle-glow: 0.65, 0.48, 0.95;
+
+  --font-display: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono-stats: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+.dark {
+  --color-primary: oklch(0.673 0.182 276.935);
+  --color-primary-light: oklch(0.746 0.16 276.935);
+  --color-primary-dark: oklch(0.585 0.233 277.117);
+  --color-surface: oklch(0.145 0.005 285.823);
+  --color-surface-alt: oklch(0.197 0.006 285.823);
+  --color-text: oklch(0.93 0.004 264.542);
+  --color-text-muted: oklch(0.552 0.016 285.938);
+  --color-border: oklch(0.274 0.006 286.032);
+
+  /* Spatial — dark mode */
+  --spatial-bg: #050505;
+  --spatial-bg-canvas: #050505;
+  --spatial-text: oklch(0.93 0.004 264.542);
+  --spatial-text-muted: oklch(0.62 0.02 285);
+  --spatial-glass: rgba(255, 255, 255, 0.03);
+  --spatial-glass-border: rgba(255, 255, 255, 0.1);
+  --spatial-card: rgba(255, 255, 255, 0.03);
+  --spatial-card-muted: rgba(255, 255, 255, 0.02);
+  --spatial-hover: rgba(255, 255, 255, 0.06);
+  --spatial-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --spatial-spotlight-1: rgba(139, 92, 246, 0.18);
+  --spatial-spotlight-2: rgba(255, 255, 255, 0.08);
+  --spatial-spotlight-3: rgba(167, 139, 250, 0.06);
+  --spatial-accent: #a78bfa;
+  --spatial-accent-soft: #8b5cf6;
+  --spatial-accent-bg: rgba(139, 92, 246, 0.1);
+  --spatial-accent-border: rgba(139, 92, 246, 0.3);
+  --spatial-avatar-border: #0a0a0a;
+  --spatial-overlay-1: rgba(88, 28, 135, 0.22);
+  --spatial-overlay-2: rgba(49, 46, 129, 0.18);
+  --spatial-overlay-3: rgba(76, 29, 149, 0.12);
+  --spatial-particle-core: 0.35, 0.2, 0.65;
+  --spatial-particle-glow: 0.75, 0.55, 1.0;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+body {
+  background-color: var(--spatial-bg);
+  color: var(--spatial-text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Semantic spatial utilities */
+.text-spatial {
+  color: var(--spatial-text);
+}
+
+.text-spatial-muted {
+  color: var(--spatial-text-muted);
+}
+
+.text-spatial-accent {
+  color: var(--spatial-accent);
+}
+
+.bg-spatial {
+  background-color: var(--spatial-bg);
+}
+
+.bg-spatial-card {
+  background-color: var(--spatial-card);
+}
+
+.bg-spatial-card-muted {
+  background-color: var(--spatial-card-muted);
+}
+
+.bg-spatial-hover:hover {
+  background-color: var(--spatial-hover);
+}
+
+.border-spatial {
+  border-color: var(--spatial-glass-border);
+}
+
+.bg-spatial-hover {
+  background-color: var(--spatial-hover);
+}
+
+/* Glass */
+.glass {
+  background: oklch(0.985 0.002 247.839 / 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid oklch(0.869 0.005 252.529 / 0.4);
+}
+
+.dark .glass {
+  background: oklch(0.197 0.006 285.823 / 0.55);
+  border: 1px solid oklch(0.274 0.006 286.032 / 0.4);
+}
+
+.glass-spatial {
+  background: var(--spatial-glass);
+  backdrop-filter: blur(40px) saturate(160%);
+  border: 1px solid var(--spatial-glass-border);
+  box-shadow: var(--spatial-shadow);
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.spatial-card {
+  border: 1px solid var(--spatial-glass-border);
+  background: var(--spatial-card);
+  box-shadow: var(--spatial-shadow);
+  backdrop-filter: blur(24px);
+}
+
+.spatial-overlay-gradient {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% -20%,
+    var(--spatial-overlay-1),
+    transparent
+  );
+}
+
+.spatial-overlay-gradient-2 {
+  background: radial-gradient(
+    ellipse 60% 40% at 100% 100%,
+    var(--spatial-overlay-2),
+    transparent
+  );
+}
+
+.spatial-overlay-gradient-3 {
+  background: radial-gradient(
+    ellipse 50% 30% at 0% 80%,
+    var(--spatial-overlay-3),
+    transparent
+  );
+}
+
+.font-mono-stats {
+  font-family: var(--font-mono-stats);
+}
+
+.btn-spatial-primary {
+  border: 1px solid var(--spatial-accent-border);
+  background: color-mix(in srgb, var(--spatial-accent-soft) 88%, transparent);
+  color: white;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--spatial-accent-soft) 35%, transparent);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.869 0.005 252.529 / 0.2) 25%,
+    oklch(0.869 0.005 252.529 / 0.5) 50%,
+    oklch(0.869 0.005 252.529 / 0.2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
