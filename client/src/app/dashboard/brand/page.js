@@ -85,10 +85,10 @@ export default function BrandDashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-2xl font-bold tracking-tight text-spatial">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--spatial-text)]">
           Welcome back, {user?.profileDetails?.firstName || user?.email?.split('@')[0] || 'there'}
         </h1>
-        <p className="mt-1 text-sm text-spatial-muted">
+        <p className="mt-1 text-sm text-[var(--spatial-text-muted)]">
           Discover top creators and manage your campaigns
         </p>
       </motion.div>
@@ -112,7 +112,7 @@ export default function BrandDashboardPage() {
       />
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-border)] w-fit">
+      <div className="mb-6 flex w-fit gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-1 dark:border-spatial dark:bg-spatial-card-muted">
         {[
           { key: 'discover', label: 'Discover Creators', icon: Search },
           { key: 'campaigns', label: 'My Active Campaigns', icon: Briefcase },

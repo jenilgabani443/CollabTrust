@@ -44,11 +44,11 @@ function StatBlock({ label, value, type = 'views', large = false, delay = 0 }) {
       <div className={`flex h-full flex-col justify-between p-6 ${large ? 'sm:p-8' : ''}`}>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-spatial-muted">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--spatial-text-muted)]">
               {label}
             </p>
             <p
-              className={`mt-2 font-mono font-semibold tracking-tight text-spatial ${
+              className={`mt-2 font-mono font-semibold tracking-tight text-[var(--spatial-text)] ${
                 large ? 'text-4xl sm:text-5xl' : 'text-2xl sm:text-3xl'
               }`}
             >
@@ -64,7 +64,7 @@ function StatBlock({ label, value, type = 'views', large = false, delay = 0 }) {
           </div>
         </div>
         {large && (
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-spatial-muted">
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-[var(--spatial-text-muted)]">
             Live network pulse — click anywhere on the canvas to send a ripple through the mesh.
           </p>
         )}
@@ -89,8 +89,8 @@ function CampaignRow({ campaign, index, getTitle, getSubtitle, statusClassName }
             <Briefcase className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-spatial">{getTitle(campaign)}</p>
-            <p className="text-xs text-spatial-muted">{getSubtitle(campaign)}</p>
+            <p className="truncate text-sm font-medium text-[var(--spatial-text)]">{getTitle(campaign)}</p>
+            <p className="text-xs text-[var(--spatial-text-muted)]">{getSubtitle(campaign)}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -173,10 +173,10 @@ export default function CampaignBentoGrid({
           <div className="flex h-full flex-col p-6 sm:p-7">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold tracking-tight text-spatial">
+                <h2 className="text-lg font-semibold tracking-tight text-[var(--spatial-text)]">
                   {campaignsTitle}
                 </h2>
-                <p className="mt-0.5 text-sm text-spatial-muted">
+                <p className="mt-0.5 text-sm text-[var(--spatial-text-muted)]">
                   {campaigns.length} {campaigns.length === 1 ? 'contract' : 'contracts'} in flight
                 </p>
               </div>

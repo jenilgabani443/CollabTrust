@@ -42,7 +42,9 @@ export default function InteractiveBackground() {
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 transition-colors duration-500" aria-hidden>
-      <div className="absolute inset-0 bg-spatial">
+      <div className="absolute inset-0 bg-spatial" />
+      {/* Particles only in dark mode — light mode uses clean gradient only */}
+      <div className="spatial-canvas-layer absolute inset-0">
         <SceneCanvas mouseRef={mouseRef} ripplesRef={ripplesRef} />
       </div>
       <div className="absolute inset-0 spatial-overlay-gradient transition-opacity duration-500" />

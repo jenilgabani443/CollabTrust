@@ -91,8 +91,8 @@ export default function Navbar() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-600/80 shadow-lg shadow-violet-900/40 transition-transform group-hover:scale-105">
                 <Shield className="h-5 w-5 text-white" />
               </div>
-              <span className="text-lg font-bold tracking-tight text-spatial">
-                Collab<span className="text-spatial-accent">Trust</span>
+              <span className="text-lg font-bold tracking-tight text-[var(--spatial-text)]">
+                Collab<span className="text-[var(--spatial-accent)]">Trust</span>
               </span>
             </Link>
 
